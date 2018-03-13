@@ -871,6 +871,12 @@ class LegacyStructConverter
             $groupData = $this->convertConfiguratorGroupStruct($group);
 
             $options = [];
+            $activeOptions = 0;
+            foreach ($group->getOptions() as $option) {
+                if ($option->getActive()) {
+                    $activeOptions++;
+                }
+            }
             foreach ($group->getOptions() as $option) {
                 $optionData = $this->convertConfiguratorOptionStruct(
                     $group,
@@ -882,6 +888,11 @@ class LegacyStructConverter
                 }
 
                 $options[$option->getId()] = $optionData;
+                if ($option->getActive() && $activeOptions == 1) {
+                    $groupData['selected_value'] = $option->getId();
+                    $options[$option->getId()]['selected'] = true;
+                }
+             }
             }
 
             $groupData['values'] = $options;
